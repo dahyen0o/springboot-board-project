@@ -21,7 +21,7 @@ import java.util.Objects;
 })
 @Entity
 public class ArticleComment {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Setter @ManyToOne(optional = false)

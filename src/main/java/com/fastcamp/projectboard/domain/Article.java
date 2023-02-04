@@ -25,7 +25,7 @@ import java.util.Objects;
 })
 @Entity
 public class Article {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Setter @Column(nullable = false) private String title;
