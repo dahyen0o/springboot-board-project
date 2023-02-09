@@ -21,8 +21,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+// @ActiveProfiles("testdb"): application.yaml의 원하는 profile로 설정하기
 @DisplayName("JPA 연결 테스트")
 @Import(JpaConfig.class) // 직접 생성한 Config 파일의 EnableJpaAuditing 옵션 반영하도록
 @ExtendWith(SpringExtension.class)
@@ -30,8 +32,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class JpaRepositoryTest {
 
-    private ArticleRepository articleRepository;
-    private ArticleCommentRepository articleCommentRepository;
+    private final ArticleRepository articleRepository;
+    private final ArticleCommentRepository articleCommentRepository;
 
     // JUnit5부터 테스트 코드에도 생성자 주입 가능
     public JpaRepositoryTest(@Autowired ArticleRepository articleRepository,
