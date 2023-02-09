@@ -20,9 +20,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy"),
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class ArticleComment {
+public class ArticleComment extends AuditingFields {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -30,11 +29,6 @@ public class ArticleComment {
     private Article article;
     @Setter @Column(nullable = false, length = 500)
     private String content;
-
-    @CreatedDate private LocalDateTime createdAt;
-    @CreatedBy private String createdBy;
-    @LastModifiedDate private LocalDateTime modifiedAt;
-    @LastModifiedBy private String modifiedBy;
 
     protected ArticleComment() {
     }

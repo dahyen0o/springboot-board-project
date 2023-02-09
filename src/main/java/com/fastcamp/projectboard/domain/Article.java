@@ -23,10 +23,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
         @Index(columnList = "hashtag"),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy"),
-})
-@EntityListeners(AuditingEntityListener.class)
+}) // AuditingFields로 따로 빼도 인덱스는 뺄 수 없음 (있으나 복잡함)
 @Entity
-public class Article {
+public class Article extends AuditingFields {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -39,10 +38,6 @@ public class Article {
     @Exclude
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt;
-    @CreatedBy @Column(nullable = false) private String createdBy;
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt;
-    @LastModifiedBy @Column(nullable = false) private String modifiedBy;
 
     protected Article() {
     }
