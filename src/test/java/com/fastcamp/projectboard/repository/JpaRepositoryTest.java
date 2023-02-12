@@ -77,10 +77,8 @@ class JpaRepositoryTest {
         article.setHashtag(updatedHashtag);
 
         // when
-        /**
-         * DataJpaTest 때문에 update 로그가 찍히지 않음
-         * flush를 통해 강제로 update 쿼리를 실행해도 rollback됨
-         */
+        // DataJpaTest 때문에 update 로그가 찍히지 않음
+        // flush를 통해 강제로 update 쿼리를 실행해도 rollback됨
         Article savedArticle = articleRepository.save(article);
 
         // then
