@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 //@WebMvcTest: 404 error (controller만 불러오고 기타 설정은 불러오지 않음)
+@Disabled("Spring Data REST 통합테스트는 불필요하므로 제외")
 @DisplayName("Data REST - api Test")
 @Transactional // 디비에 영향을 주지 않도록 -> 기본이 rollback 상태
 @AutoConfigureMockMvc // MockMvc 추가
 @SpringBootTest
 public class DataRestTest {
+    // Spring data REST의 기능이지 따로 개발한 기능이 아니므로
+    // 사실 테스트는 필요없음, 당연히 잘 동작
 
     private final MockMvc mvc;
 
