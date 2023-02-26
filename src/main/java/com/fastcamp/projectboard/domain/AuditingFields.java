@@ -18,7 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public class AuditingFields {
+public abstract class AuditingFields {
     // 공통 column 따로 추출
     @CreatedDate @DateTimeFormat(iso = ISO.DATE_TIME)
     @Column(nullable = false, updatable = false) private LocalDateTime createdAt;
