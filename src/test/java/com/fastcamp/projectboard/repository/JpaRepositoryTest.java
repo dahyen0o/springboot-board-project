@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.fastcamp.projectboard.config.JpaConfig;
 import com.fastcamp.projectboard.domain.Article;
 import com.fastcamp.projectboard.domain.ArticleComment;
+import com.fastcamp.projectboard.domain.UserAccount;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -34,12 +35,15 @@ class JpaRepositoryTest {
 
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final UserAccountRepository userAccountRepository;
 
     // JUnit5부터 테스트 코드에도 생성자 주입 가능
     public JpaRepositoryTest(@Autowired ArticleRepository articleRepository,
-                             @Autowired ArticleCommentRepository articleCommentRepository) {
+                             @Autowired ArticleCommentRepository articleCommentRepository,
+                             @Autowired UserAccountRepository userAccountRepository) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @DisplayName("select 테스트")
@@ -59,7 +63,8 @@ class JpaRepositoryTest {
     void givenTestData_whenInserting_thenWorksFine() {
         // given
         long previousCount = articleRepository.count();
-        Article article = Article.of("new article", "new content", "#spring");
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("uno", "pw", null, null, null));
+        Article article = Article.of(userAccount, "new article", "new content", "#spring");
 
         // when
         articleRepository.save(article);
