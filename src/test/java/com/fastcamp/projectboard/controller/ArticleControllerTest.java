@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fastcamp.projectboard.config.SecurityConfig;
+import com.fastcamp.projectboard.domain.type.SearchType;
 import com.fastcamp.projectboard.dto.ArticleWithCommentsDto;
 import com.fastcamp.projectboard.dto.UserAccountDto;
 import com.fastcamp.projectboard.service.ArticleService;
@@ -61,6 +62,29 @@ class ArticleControllerTest {
                 .andExpect(view().name("articles/index"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("paginationBarNumbers"));
         then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
+    @DisplayName("[view][GET] 게시글 리스트 (게시판) 페이지 - 검색어와 함께 호출")
+    @Test
+    public void givenSearchKeyword_whenRequestingArticlesView_thenReturnsArticlesView() throws Exception {
+        // Given
+        SearchType searchType = SearchType.TITLE;
+        String searchValue = "title";
+        given(articleService.searchArticles(eq(searchType), eq(searchValue), any(Pageable.class)))
+                .willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
+
+        // When & Then
+        mvc.perform(get("/articles")
+                        .queryParam("searchType",searchType.name())
+                        .queryParam("searchValue", searchValue))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("articles"))
+                .andExpect(view().name("articles/index"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("searchTypes"));
+        then(articleService).should().searchArticles(eq(searchType), eq(searchValue), any(Pageable.class));
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
