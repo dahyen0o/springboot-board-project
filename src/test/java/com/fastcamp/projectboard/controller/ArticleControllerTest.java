@@ -127,15 +127,18 @@ class ArticleControllerTest {
     public void givenNothing_whenRequestingArticleView_thenReturnsArticleView() throws Exception {
         // Given
         Long articleId = 1L;
+        Long totalCount = 1L;
         given(articleService.getArticle(articleId)).willReturn(createArticleWithCommentsDto());
+        given(articleService.getArticleCount()).willReturn(totalCount);
 
         // When & Then
         mvc.perform(get("/articles/" + articleId))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("article"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("articleComments"))
-                .andExpect(view().name("articles/detail"));
+                .andExpect(view().name("articles/detail"))
+                .andExpect(model().attributeExists("articleComments"))
+                .andExpect(model().attribute("totalCount", totalCount));
         then(articleService).should().getArticle(articleId);
     }
 
