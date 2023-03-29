@@ -28,7 +28,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Article extends AuditingFields {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Setter @ManyToOne(optional = false) private UserAccount userAccount;
+    @Setter @ManyToOne(optional = false) @JoinColumn(name = "userId") private UserAccount userAccount;
     @Setter @Column(nullable = false) private String title;
     @Setter @Column(nullable = false, length = 10000) private String content;
     @Setter private String hashtag;
