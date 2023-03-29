@@ -1,10 +1,12 @@
 package com.fastcamp.projectboard.service;
 
 import com.fastcamp.projectboard.domain.Article;
-import com.fastcamp.projectboard.domain.type.SearchType;
+import com.fastcamp.projectboard.domain.UserAccount;
+import com.fastcamp.projectboard.domain.constant.SearchType;
 import com.fastcamp.projectboard.dto.ArticleDto;
 import com.fastcamp.projectboard.dto.ArticleWithCommentsDto;
 import com.fastcamp.projectboard.repository.ArticleRepository;
+import com.fastcamp.projectboard.repository.UserAccountRepository;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, Pageable pageable) {
@@ -39,13 +42,14 @@ public class ArticleService {
     }
 
     public void saveArticle(ArticleDto dto) {
-        articleRepository.save(dto.toEntity());
+        UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+        articleRepository.save(dto.toEntity(userAccount));
     }
 
-    public void updateArticle(ArticleDto dto) {
+    public void updateArticle(Long articleId, ArticleDto dto) {
         try {
             // getReferenceById(): findById()와 비슷하지만, 무조견 값을 반환할 때 사용
-            Article article = articleRepository.getReferenceById(dto.id());
+            Article article = articleRepository.getReferenceById(articleId);
             if(dto.title() != null) {
                 article.setTitle(dto.title());
             }
@@ -68,9 +72,16 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleWithCommentsDto getArticle(Long articleId) {
+    public ArticleWithCommentsDto getArticleWithComments(Long articleId) {
         return articleRepository.findById(articleId)
                 .map(ArticleWithCommentsDto::from)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다 - articleId: " + articleId));
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleDto getArticle(Long articleId) {
+        return articleRepository.findById(articleId)
+                .map(ArticleDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다 - articleId: " + articleId));
     }
 
