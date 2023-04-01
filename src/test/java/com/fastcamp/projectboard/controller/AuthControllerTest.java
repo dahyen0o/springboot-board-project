@@ -18,7 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("View 컨트롤러 - 인증")
 @Import(SecurityConfig.class)
-@WebMvcTest
+// `/login` 페이지는 직접 만든 컨트롤러가 아니고 스프링 시큐리티가 해주는 작업이므로
+// 컨트롤러 테스트에서 읽어야 할 컨트롤러 빈이 없으므로 이를 `Void.class`로 표현
+@WebMvcTest(Void.class)
 class AuthControllerTest {
 
     private final MockMvc mvc;
