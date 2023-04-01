@@ -37,6 +37,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @DisplayName("View Controller - 게시글")
 @Import({SecurityConfig.class, FormDataEncoder.class})
+// WebMvcTest는 슬라이스 테스트 -> 모든 루트 패키지를 스캔하지 않음 (필수 configuration과 controller만)
+// -> 필요한 class는 직접 import
 @WebMvcTest(ArticleController.class)
 class ArticleControllerTest {
 
@@ -48,7 +50,7 @@ class ArticleControllerTest {
     @MockBean
     private PaginationService paginationService;
 
-    public ArticleControllerTest(@Autowired MockMvc mvc, FormDataEncoder formDataEncoder) {
+    public ArticleControllerTest(@Autowired MockMvc mvc, @Autowired FormDataEncoder formDataEncoder) {
         this.mvc = mvc;
         this.formDataEncoder = formDataEncoder;
     }
@@ -173,7 +175,7 @@ class ArticleControllerTest {
         mvc.perform(get("/articles/search-hashtag"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(model().attributeExists("articles/search-hashtag"))
+                .andExpect(view().name("articles/search-hashtag"))
                 .andExpect(model().attribute("articles", Page.empty()))
                 .andExpect(model().attribute("searchType", SearchType.HASHTAG))
                 .andExpect(model().attribute("hashtags", hashtags))
@@ -201,7 +203,7 @@ class ArticleControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(model().attributeExists("articles/search-hashtag"))
+                .andExpect(view().name("articles/search-hashtag"))
                 .andExpect(model().attribute("articles", Page.empty()))
                 .andExpect(model().attribute("hashtags", hashtags))
                 .andExpect(model().attributeExists("paginationBarNumbers"));
@@ -236,6 +238,7 @@ class ArticleControllerTest {
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .content(formDataEncoder.encode(articleRequest))
                                 .with(csrf())
+                // csrf(): Spring Security에서 csrf 기능을 넣어줌
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/articles"))
