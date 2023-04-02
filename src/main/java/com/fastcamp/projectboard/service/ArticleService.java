@@ -50,25 +50,25 @@ public class ArticleService {
         try {
             // getReferenceById(): findById()와 비슷하지만, 무조견 값을 반환할 때 사용
             Article article = articleRepository.getReferenceById(articleId);
-            if(dto.title() != null) {
-                article.setTitle(dto.title());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+
+            if (article.getUserAccount().equals(userAccount)) {
+                if (dto.title() != null) { article.setTitle(dto.title()); }
+                if (dto.content() != null) { article.setContent(dto.content()); }
+                article.setHashtag(dto.hashtag());
             }
-            if(dto.content() != null) {
-                article.setContent(dto.content());
-            }
-            article.setHashtag(dto.hashtag());
             // articleRepository.save(article);
             // : @Transactional에 의해 메서드 단위로 트랜잭션이 묶여있음
             //   따라서 트랜잭션이 끝날 때 영속성 컨텍스트가 article의 변화를 감지하고
             //   감지분에 대해 쿼리를 날림.
         } catch (EntityNotFoundException e) {
-            log.warn("게시글 업데이트 실패. 게시글을 찾을 수 없습니다. dto: {}", dto);
+            log.warn("게시글 업데이트 실패. 게시글을 수정하는데 필요한 정보를 찾을 수 없습니다 - {}", e.getLocalizedMessage());
         }
 
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     @Transactional(readOnly = true)

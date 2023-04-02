@@ -21,6 +21,7 @@ public interface ArticleCommentRepository extends
     // '테이블_컬럼' 형식
     // = Article의 id로 ArticleComment들을 찾는다
     List<ArticleComment> findByArticle_Id(Long articleId);
+    void deleteByIdAndUserAccount_UserId(Long articleCommentId, String userId);
 
     @Override
     default void customize(QuerydslBindings bindings, QArticleComment root) {

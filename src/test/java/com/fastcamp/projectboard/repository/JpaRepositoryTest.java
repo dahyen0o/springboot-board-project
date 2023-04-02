@@ -9,7 +9,9 @@ import com.fastcamp.projectboard.config.JpaConfig;
 import com.fastcamp.projectboard.domain.Article;
 import com.fastcamp.projectboard.domain.ArticleComment;
 import com.fastcamp.projectboard.domain.UserAccount;
+import com.fastcamp.projectboard.repository.JpaRepositoryTest.TestJpaConfig;
 import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,14 +22,18 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 // @ActiveProfiles("testdb"): application.yaml의 원하는 profile로 설정하기
 @DisplayName("JPA 연결 테스트")
-@Import(JpaConfig.class) // 직접 생성한 Config 파일의 EnableJpaAuditing 옵션 반영하도록
+@Import(TestJpaConfig.class) // 직접 생성한 Config 파일의 EnableJpaAuditing 옵션 반영하도록
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -105,5 +111,14 @@ class JpaRepositoryTest {
         // then
         assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
         assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
+    }
+
+    @EnableJpaAuditing
+    @TestConfiguration
+    public static class TestJpaConfig {
+        @Bean
+        public AuditorAware<String> auditorAware() {
+            return () -> Optional.of("uno");
+        }
     }
 }
